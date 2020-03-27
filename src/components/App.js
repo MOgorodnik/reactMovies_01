@@ -2,18 +2,7 @@ import React from "react";
 import { moviesData } from "../moviesData";
 import MovieItem from "./MovieItem";
 
-function removeMovie(movie) {
-  console.log("/// removeMovie");
-  console.log(this, "MOVIE single", movie);
 
-  const updateMovies = this.state.movies.filter(function(item) {
-    return item.id !== movie.id;
-  });
-  console.log(updateMovies);
-  this.setState({
-    movies: updateMovies
-  });
-}
 
 class App extends React.Component {
   constructor() {
@@ -23,16 +12,19 @@ class App extends React.Component {
       movies: moviesData,
       moviesWillWatch: []
     };
+  }
+  
+  removeMovie = (movie) => {
+    const updateMovies = this.state.movies.filter(function(item) {
+      return item.id !== movie.id;
+    });
 
-    // this.removeMovie = this.removeMovie.bind(this);
+    this.setState({
+      movies: updateMovies
+    });
   }
 
   addMovieToWillWatch = (movie) => {
-    console.log("add movie", this, movie);
-    // this.state.moviesWillWatch.push(movie);
-    // const updateMoviesWillWatch = [...this.state.moviesWillWatch];
-    // updateMoviesWillWatch.push(movie);
-
     const updateMoviesWillWatch = [...this.state.moviesWillWatch, movie];
 
     this.setState({
@@ -52,14 +44,12 @@ class App extends React.Component {
 
   render() {
     console.log("--- App ---", this.state.moviesWillWatch );
-    // console.log("App render", this.state);
-    // console.log("App this", this.state.movies[1].title);
     return (
       <div className="container">
         <div className="row">
           <MovieList
             movies={this.state.movies}
-            appThis={this}
+            removeMovie = {this.removeMovie}
             addMovieToWillWatch={this.addMovieToWillWatch}
             removeMovieFromWillWatch={this.removeMovieFromWillWatch}
           />
@@ -83,17 +73,15 @@ class MovieList extends React.Component {
   render() {
     const {
       movies,
-      appThis,
+      removeMovie,
       removeMovieFromWillWatch,
       addMovieToWillWatch
     } = this.props;
-    console.log("--- MovieList ---");
-    // console.log(this.props);
-    // console.log("MovieList movies", movies, removeMovie);
+    console.log("--- MovieList ---", movies);
     return (
       <div className="col-8 col-sm-9">
         <div className="row">
-          {movies.map(function(movie) {
+          {movies.map((movie) => {
             return (
               <div
                 className="offset-1 col-10 offset-sm-0 col-sm-6 mt-4"
@@ -102,26 +90,16 @@ class MovieList extends React.Component {
                 <MovieItem
                   movie={movie}
                   removeMovie={removeMovie}
-                  appThis={appThis}
-                  addMovieToWillWatch={addMovieToWillWatch.bind(
-                    appThis,
-                    movie // Почитай за bind Ты аргументом передаёшь функцию Вот она тебе и добавляется
-                  )}
-                  removeMovieFromWillWatch={removeMovieFromWillWatch.bind(
-                    appThis,
-                    movie)}
+                  addMovieToWillWatch={addMovieToWillWatch}
+                  removeMovieFromWillWatch={removeMovieFromWillWatch}
                 />
               </div>
             );
-          }, this)}
+          })}
         </div>
       </div>
     );
   }
 }
-
-// function App() {
-//   return <div>Hello React !</div>;
-// }
 
 export default App;
