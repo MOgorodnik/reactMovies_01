@@ -47,7 +47,6 @@ class MovieItem extends React.Component {
                 type="button"
                 className="btn btn-success btn-sm"
                 onClick={() => {
-                  console.log("Click for add", movie, "\n", addMovieToWillWatch);
                   this.setState({
                     willWatch: true
                   });
@@ -61,11 +60,11 @@ class MovieItem extends React.Component {
 
             <button
               type="button"
-              title="{movie.title}"
+              title={movie.title}
               className="btn btn-danger btn-sm mx-2"
               // onClick={ () => {console.log(this)} }
               // onClick={removeMovie.bind(appThis, movie)}
-                onClick={removeMovie.bind(this, movie) }
+                onClick={removeMovie.bind(null, movie) }
             >
               <span className="material-icons">delete_forever</span>
             </button>
