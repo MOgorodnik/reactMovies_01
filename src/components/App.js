@@ -1,14 +1,17 @@
 import React from "react";
-import { moviesData } from "../moviesData";
+// import { moviesData } from "../moviesData";
+import { API_URL, API_KEY_3 } from "../utils/api";
 import MovieItem from "./MovieItem";
+import MovieTabs from "./MovieTabs";
 
 class App extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      movies: moviesData,
-      moviesWillWatch: []
+      movies: [],
+      moviesWillWatch: [],
+      sort_by: "popularity.desc"
     };
   }
 
@@ -42,6 +45,22 @@ class App extends React.Component {
     });
   };
 
+  componentDidMount() {
+    console.log("App didMount => ",  this.state.sort_by);
+    fetch(
+      `${API_URL}/discover/movie?api_key=${API_KEY_3}&sort_by=${this.state.sort_by}`
+    ).then(response => {
+        console.log("then", response);
+        return response.json();
+      })
+      .then(data => {
+        console.log("data", data);
+        this.setState({
+          movies: data.results
+        });
+      });
+  }
+
   render() {
     console.log("--- App ---", this.state.moviesWillWatch);
     return (
@@ -52,24 +71,20 @@ class App extends React.Component {
             removeMovie={this.removeMovie}
             addMovieToWillWatch={this.addMovieToWillWatch}
             removeMovieFromWillWatch={this.removeMovieFromWillWatch}
+            sort_by={this.state.sort_by}
           />
           <div className="col-4 col-sm-3 mt-4">
             <div className="sticky-top">
               <h4>Will Watch: {this.state.moviesWillWatch.length} movies</h4>
               <ul className="list-group">
-                {/* <li className="list-group-item">
-                  <div className="d-flex justify-content-between">1111 </div>
-                </li> */}
-                {this.state.moviesWillWatch.map(movie => {
-                  return (
-                    <li className="list-group-item" key={movie.id}>
-                      <div className="d-flex justify-content-between">
-                        <p>{movie.title}</p>
-                        <p>{movie.vote_average}</p>
-                      </div>
-                    </li>
-                  );
-                })}
+                {this.state.moviesWillWatch.map(movie => (
+                  <li className="list-group-item" key={movie.id}>
+                    <div className="d-flex justify-content-between">
+                      <p>{movie.title}</p>
+                      <p>{movie.vote_average}</p>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -85,11 +100,19 @@ class MovieList extends React.Component {
       movies,
       removeMovie,
       removeMovieFromWillWatch,
-      addMovieToWillWatch
+      addMovieToWillWatch,
+      sort_by
     } = this.props;
     console.log("--- MovieList ---", movies);
     return (
       <div className="col-8 col-sm-9">
+        <div className="row mb-4">
+          <div className="col-12">
+            <MovieTabs
+              sort_by={sort_by}
+            />
+          </div>
+        </div>
         <div className="row">
           {movies.map(movie => {
             return (
